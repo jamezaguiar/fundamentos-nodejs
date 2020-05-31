@@ -19,6 +19,12 @@ class CreateTransactionService {
       throw Error('Transaction types must be income or outcome');
     }
 
+    const balance = this.transactionsRepository.getBalance();
+
+    if (type === 'outcome' && balance.total - value < 0) {
+      throw Error('Insufficient cash value for this transaction');
+    }
+
     const transaction = this.transactionsRepository.create({
       title,
       value,
