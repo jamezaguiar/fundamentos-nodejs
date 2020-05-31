@@ -15,13 +15,13 @@ class CreateTransactionService {
   }
 
   public execute({ title, value, type }: RequestDTO): Transaction {
-    if (type !== 'income' && type !== 'outcome') {
+    if (!['income', 'outcome'].includes(type)) {
       throw Error('Transaction types must be income or outcome');
     }
 
-    const balance = this.transactionsRepository.getBalance();
+    const { total } = this.transactionsRepository.getBalance();
 
-    if (type === 'outcome' && balance.total - value < 0) {
+    if (type === 'outcome' && total < value) {
       throw Error('Insufficient cash value for this transaction');
     }
 
